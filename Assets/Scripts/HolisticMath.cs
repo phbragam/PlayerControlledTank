@@ -66,10 +66,22 @@ public class HolisticMath
     }
 
 
-    // This method also translates, but a better solution is adding transform.up (already rotated) * translate
-    // to transform.position in Drive.Update() 
-    // (Drive script attached to the Tank Game Object)
-    static public Coords Translate(Coords position, Coords facing, Coords vector)
+    static public Vector3 Translate(Vector3 position, Vector3 rotatedForwardVector, float translation)
+    {
+        return position += rotatedForwardVector * translation;
+    }
+
+    static public Coords Cross(Coords vector1, Coords vector2)
+    {
+        float xMult = vector1.y * vector2.z - vector1.z * vector2.y;
+        float yMult = vector1.z * vector2.x - vector1.x * vector2.z;
+        float zMult = vector1.x * vector2.y - vector1.y * vector2.x;
+        Coords crossProd = new Coords(xMult, yMult, zMult);
+        return crossProd;
+    }
+
+    // This method also translates, but a better solution is Translate
+    static public Coords ComplexTranslate(Coords position, Coords facing, Coords vector)
     {
         if (Distance(new Coords(0, 0, 0), vector) <= 0)
         {
@@ -95,14 +107,5 @@ public class HolisticMath
         float zVal = position.z + vector.z;
 
         return new Coords(xVal, yVal, zVal);
-    }
-
-    static public Coords Cross(Coords vector1, Coords vector2)
-    {
-        float xMult = vector1.y * vector2.z - vector1.z * vector2.y;
-        float yMult = vector1.z * vector2.x - vector1.x * vector2.z;
-        float zMult = vector1.x * vector2.y - vector1.y * vector2.x;
-        Coords crossProd = new Coords(xMult, yMult, zMult);
-        return crossProd;
     }
 }
