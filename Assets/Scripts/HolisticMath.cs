@@ -16,8 +16,8 @@ public class HolisticMath
 
     static public float Distance(Coords point1, Coords point2)
     {
-        float diffSquared = Square(point1.x - point2.x) + 
-                            Square(point1.y - point2.y) + 
+        float diffSquared = Square(point1.x - point2.x) +
+                            Square(point1.y - point2.y) +
                             Square(point1.z - point2.z);
         float squareRoot = Mathf.Sqrt(diffSquared);
         return squareRoot;
@@ -55,7 +55,7 @@ public class HolisticMath
 
     static public Coords Rotate(Coords vector, float angle, bool clockwise) //in radians
     {
-        if(clockwise)
+        if (clockwise)
         {
             angle = 2 * Mathf.PI - angle;
         }
@@ -63,6 +63,38 @@ public class HolisticMath
         float xVal = vector.x * Mathf.Cos(angle) - vector.y * Mathf.Sin(angle);
         float yVal = vector.x * Mathf.Sin(angle) + vector.y * Mathf.Cos(angle);
         return new Coords(xVal, yVal, 0);
+    }
+
+
+    // This method also translates, but a better solution is adding transform.up (already rotated) * translate
+    // to transform.position in Drive.Update() 
+    // (Drive script attached to the Tank Game Object)
+    static public Coords Translate(Coords position, Coords facing, Coords vector)
+    {
+        if (Distance(new Coords(0, 0, 0), vector) <= 0)
+        {
+            return position;
+        }
+
+        float angle = Angle(vector, facing);
+
+        // Zero if going ahead, 180 if going backwards
+        float worldAngle = Angle(vector, new Coords(0, 1, 0));
+
+        bool clockwise = false;
+
+        if (Cross(vector, facing).z < 0)
+        {
+            clockwise = true;
+        }
+
+        vector = Rotate(vector, angle + worldAngle, clockwise);
+
+        float xVal = position.x + vector.x;
+        float yVal = position.y + vector.y;
+        float zVal = position.z + vector.z;
+
+        return new Coords(xVal, yVal, zVal);
     }
 
     static public Coords Cross(Coords vector1, Coords vector2)
