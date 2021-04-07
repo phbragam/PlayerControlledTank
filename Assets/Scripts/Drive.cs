@@ -21,7 +21,6 @@ public class Drive : MonoBehaviour
         //transform.Translate(0, translation, 0);
 
         transform.position = HolisticMath.Translate(transform.position, forwardVector, translation);
-        //transform.position += forwardVector * translation;
 
         //transform.Rotate(0, 0, -rotation);
 
